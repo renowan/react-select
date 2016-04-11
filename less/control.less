@@ -14,7 +14,9 @@
 	border-color: @select-input-border-focus lighten(@select-input-border-focus, 5%) lighten(@select-input-border-focus, 5%);
 	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 5px -1px fade(@select-input-border-focus,50%);
 }
-
+body{
+	font-size: 99px;
+}
 // base
 
 .Select {
@@ -49,13 +51,14 @@
 	border-radius: @select-input-border-radius;
 	border: @select-input-border-width solid @select-input-border-color;
 	color: @select-text-color;
-	cursor: default;
+	cursor: pointer;
 	display: table;
 	height: @select-input-height;
 	outline: none;
 	overflow: hidden;
 	position: relative;
 	width: 100%;
+	padding-bottom: 5px;
 
 	&:hover {
 		box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
@@ -69,9 +72,10 @@
 }
 
 .is-open > .Select-control {
+	border-bottom: 0px;
 	.border-bottom-radius( 0 );
-	background: @select-input-bg;
-	border-color: darken(@select-input-border-color, 10%) @select-input-border-color lighten(@select-input-border-color, 5%);
+	// background: @select-input-bg;
+	// border-color: darken(@select-input-border-color, 10%) @select-input-border-color lighten(@select-input-border-color, 5%);
 
 	// flip the arrow so its pointing up when the menu is open
 	> .Select-arrow {
@@ -92,12 +96,12 @@
 
 // placeholder
 
-.Select-placeholder,
+.Select-placeholder, .Select-placeholder-empty ,
 :not(.Select--multi) > .Select-control .Select-value {
 	bottom: 0;
 	color: @select-input-placeholder;
 	left: 0;
-	line-height: @select-input-internal-height;
+	line-height: 38px;
 	padding-left: @select-padding-horizontal;
 	padding-right: @select-padding-horizontal;
 	position: absolute;
@@ -111,10 +115,20 @@
 	white-space: nowrap;
 }
 
+.Select-placeholder , .Select-placeholder-empty{
+	padding-left: 8px;
+}
+
+.Select-placeholder-empty{
+	min-width: 30px;
+	min-height: 10px;
+}
+
 .has-value:not(.Select--multi) > .Select-control > .Select-value,
 .has-value.is-pseudo-focused:not(.Select--multi) > .Select-control > .Select-value {
 	.Select-value-label {
 		color: @select-text-color;
+		padding-left: 8px;
 	}
 	a.Select-value-label {
 		cursor: pointer;
@@ -134,8 +148,8 @@
 
 .Select-input {
 	// inherits `display: inline-block` from "react-input-autosize"
-	height: @select-input-internal-height;
-	padding-left: @select-padding-horizontal;
+	height: 24px;
+	padding-left: 2px;
 	padding-right: @select-padding-horizontal;
 	vertical-align: middle;
 
@@ -148,7 +162,7 @@
 		display: inline-block;
 		font-family: inherit;
 		font-size: inherit;
-		height: @select-input-internal-height;
+		height: 24px;
 		margin: 0;
 		outline: none;
 		padding: 0;
@@ -197,6 +211,7 @@
 	text-align: center;
 	vertical-align: middle;
 	width: @select-clear-width;
+	padding-top: 4px;
 
 	&:hover {
 		color: @select-clear-hover-color;
@@ -238,6 +253,40 @@
 }
 
 
+.Select-arrow-zone .select2-arrow {
+  display: inline-block;
+  width: 24px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  background: #ffffff;
+}
+.Select-arrow-zone .select2-arrow b {
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  font-size: 14px;
+}
+.Select-arrow-zone .select2-arrow b:before {
+  content: "\f107";
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: block;
+}
+
+
 
 
 // Animation
@@ -252,4 +301,166 @@
 @keyframes Select-animation-fadeIn {
 	from { opacity: 0; }
 	to { opacity: 1; }
+}
+
+// ------------------------------
+
+/* Grid default theme */
+
+.Grid {
+    position: relative;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  /* Without this property, Chrome repaints the entire Grid any time a new row or column is added.
+     Firefox only repaints the new row or column (regardless of this property).
+     Safari and IE don't support the property at all. */
+  will-change: transform;
+}
+
+.Grid__innerScrollContainer {
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.Grid__cell {
+  position: absolute;
+}
+
+/* FlexTable default theme */
+
+.FlexTable {
+}
+
+.FlexTable__Grid {
+  overflow-x: hidden;
+}
+
+.FlexTable__headerRow {
+  font-weight: 700;
+  text-transform: uppercase;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  overflow: hidden;
+}
+.FlexTable__headerTruncatedText {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.FlexTable__row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  overflow: hidden;
+}
+
+.FlexTable__headerColumn,
+.FlexTable__rowColumn {
+  margin-right: 10px;
+  min-width: 0px;
+}
+
+.FlexTable__headerColumn:first-of-type,
+.FlexTable__rowColumn:first-of-type {
+  margin-left: 10px;
+}
+.FlexTable__headerColumn {
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  overflow: hidden;
+}
+.FlexTable__sortableHeaderColumn {
+  cursor: pointer;
+}
+.FlexTable__rowColumn {
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  overflow: hidden;
+  height: 100%;
+}
+
+.FlexTable__sortableHeaderIconContainer {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.FlexTable__sortableHeaderIcon {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 24px;
+      -ms-flex: 0 0 24px;
+          flex: 0 0 24px;
+  height: 1em;
+  width: 1em;
+  fill: currentColor;
+}
+
+.FlexTable__truncatedColumnText {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* VirtualScroll default theme */
+
+.VirtualScroll {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.VirtualScroll__innerScrollContainer {
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.VirtualScroll__row {
+  position: absolute;
 }
