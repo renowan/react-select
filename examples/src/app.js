@@ -15,15 +15,28 @@ import States from './components/States';
 ReactDOM.render(
 	<div>
 		<Cities label="Cities" />
-		<States label="States" searchable />
+		<br/>
+		<br/>
+		<br/>
+		<br/>
 		<Multiselect label="Multiselect" />
-		<Contributors label="Contributors (Async)" />
-		<NumericSelect label="Numeric Values" />
-		<CustomRender label="Custom Render Methods"/>
-		<CustomComponents label="Custom Placeholder, Option and Value Components" />
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+
+
+
 		{/*
 		<SelectedValuesField label="Option Creation (tags mode)" options={FLAVOURS} allowCreate hint="Enter a value that's NOT in the list, then hit return" />
 		*/}
 	</div>,
 	document.getElementById('example')
 );
+
+// <States label="States" searchable />
+//
+// <Contributors label="Contributors (Async)" />
+// <NumericSelect label="Numeric Values" />
+// <CustomRender label="Custom Render Methods"/>
+// <CustomComponents label="Custom Placeholder, Option and Value Components" />

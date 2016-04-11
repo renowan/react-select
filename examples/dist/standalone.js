@@ -64,7 +64,7 @@ var Async = _react2['default'].createClass({
 		loadOptions: _react2['default'].PropTypes.func.isRequired, // function to call to load options asynchronously
 		loadingPlaceholder: _react2['default'].PropTypes.string, // replaces the placeholder while options are loading
 		minimumInput: _react2['default'].PropTypes.number, // the minimum number of characters that trigger loadOptions
-		noResultsText: _react2['default'].PropTypes.string, // placeholder displayed when there are no matching search results (shared with Select)
+		noResultsText: stringOrNode, // placeholder displayed when there are no matching search results (shared with Select)
 		placeholder: stringOrNode, // field placeholder, displayed when there's no value (shared with Select)
 		searchPromptText: _react2['default'].PropTypes.string, // label to prompt for search input
 		searchingText: _react2['default'].PropTypes.string },
@@ -389,6 +389,7 @@ var Select = _react2['default'].createClass({
 		simpleValue: _react2['default'].PropTypes.bool, // pass the value to onChange as a simple value (legacy pre 1.0 mode), defaults to false
 		style: _react2['default'].PropTypes.object, // optional style to apply to the control
 		tabIndex: _react2['default'].PropTypes.string, // optional tab index of the control
+		tabSelectsValue: _react2['default'].PropTypes.bool, // whether to treat tabbing out while focused to be value selection
 		value: _react2['default'].PropTypes.any, // initial field value
 		valueComponent: _react2['default'].PropTypes.func, // value component to render
 		valueKey: _react2['default'].PropTypes.string, // path of the label value in option objects
@@ -430,6 +431,7 @@ var Select = _react2['default'].createClass({
 			scrollMenuIntoView: true,
 			searchable: true,
 			simpleValue: false,
+			tabSelectsValue: true,
 			valueComponent: _Value2['default'],
 			valueKey: 'value'
 		};
@@ -494,7 +496,7 @@ var Select = _react2['default'].createClass({
 		if (this.props.scrollMenuIntoView && this.refs.menuContainer) {
 			var menuContainerRect = this.refs.menuContainer.getBoundingClientRect();
 			if (window.innerHeight < menuContainerRect.bottom + this.props.menuBuffer) {
-				window.scrollTo(0, window.scrollY + menuContainerRect.bottom + this.props.menuBuffer - window.innerHeight);
+				window.scrollBy(0, menuContainerRect.bottom + this.props.menuBuffer - window.innerHeight);
 			}
 		}
 		if (prevProps.disabled !== this.props.disabled) {
@@ -504,13 +506,19 @@ var Select = _react2['default'].createClass({
 
 	focus: function focus() {
 		if (!this.refs.input) return;
-		this.refs.input.focus();
-
-		if (this.props.openAfterFocus) {
+		// this.refs.input.focus();
+		if (this.props.openAfterFocus || this._openAfterFocus) {
+			this._openAfterFocus = false;
 			this.setState({
 				isOpen: true
 			});
 		}
+
+		var self = this;
+
+		setTimeout(function () {
+			self.refs.input.focus();
+		}, 500);
 	},
 
 	blurInput: function blurInput() {
@@ -547,6 +555,10 @@ var Select = _react2['default'].createClass({
 	},
 
 	handleMouseDown: function handleMouseDown(event) {
+
+		// console.log('this.state.isOpen',this.state.isOpen);
+		// console.log('this.state.isFocused',this.state.isFocused);
+		// console.log('this.props.searchable',this.props.searchable);
 		// if the event was triggered by a mousedown and not the primary
 		// button, or if the component is disabled, ignore it.
 		if (this.props.disabled || event.type === 'mousedown' && event.button !== 0) {
@@ -560,6 +572,7 @@ var Select = _react2['default'].createClass({
 		// for the non-searchable select, toggle the menu
 		if (!this.props.searchable) {
 			this.focus();
+			console.log('a');
 			return this.setState({
 				isOpen: !this.state.isOpen
 			});
@@ -572,6 +585,7 @@ var Select = _react2['default'].createClass({
 				isPseudoFocused: false
 			});
 		} else {
+			console.log('2');
 			// otherwise, focus the input and open the menu
 			this._openAfterFocus = true;
 			this.focus();
@@ -668,7 +682,7 @@ var Select = _react2['default'].createClass({
 				return;
 			case 9:
 				// tab
-				if (event.shiftKey || !this.state.isOpen) {
+				if (event.shiftKey || !this.state.isOpen || !this.props.tabSelectsValue) {
 					return;
 				}
 				this.selectFocusedOption();
@@ -910,7 +924,7 @@ var Select = _react2['default'].createClass({
 				'div',
 				{ className: 'Select-placeholder' },
 				this.props.placeholder
-			) : null;
+			) : _react2['default'].createElement('div', { className: 'Select-placeholder-empty' });
 		}
 		var onClick = this.props.onValueClick ? this.handleValueClick : null;
 		if (this.props.multi) {
@@ -928,6 +942,7 @@ var Select = _react2['default'].createClass({
 				);
 			});
 		} else if (!this.state.inputValue) {
+
 			if (isOpen) onClick = null;
 			return _react2['default'].createElement(
 				ValueComponent,
@@ -998,7 +1013,11 @@ var Select = _react2['default'].createClass({
 		return _react2['default'].createElement(
 			'span',
 			{ className: 'Select-arrow-zone', onMouseDown: this.handleMouseDownOnArrow },
-			_react2['default'].createElement('span', { className: 'Select-arrow', onMouseDown: this.handleMouseDownOnArrow })
+			_react2['default'].createElement(
+				'span',
+				{ className: 'select2-arrow', onMouseDown: this.handleMouseDownOnArrow },
+				_react2['default'].createElement('b', null)
+			)
 		);
 	},
 
@@ -1137,6 +1156,26 @@ var Select = _react2['default'].createClass({
 		}
 	},
 
+	renderOuter: function renderOuter(options, valueArray, focusedOption) {
+		var menu = this.renderMenu(options, valueArray, focusedOption);
+		if (!menu) {
+			return null;
+		}
+
+		return _react2['default'].createElement(
+			'div',
+			{ ref: 'menuContainer', className: 'Select-menu-outer', style: this.props.menuContainerStyle },
+			_react2['default'].createElement(
+				'div',
+				{ ref: 'menu', className: 'Select-menu',
+					style: this.props.menuStyle,
+					onScroll: this.handleMenuScroll,
+					onMouseDown: this.handleMouseDownOnMenu },
+				menu
+			)
+		);
+	},
+
 	render: function render() {
 		var valueArray = this.getValueArray();
 		var options = this._visibleOptions = this.filterOptions(this.props.multi ? valueArray : null);
@@ -1153,6 +1192,7 @@ var Select = _react2['default'].createClass({
 			'is-searchable': this.props.searchable,
 			'has-value': valueArray.length
 		});
+
 		return _react2['default'].createElement(
 			'div',
 			{ ref: 'wrapper', className: className, style: this.props.wrapperStyle },
@@ -1162,29 +1202,28 @@ var Select = _react2['default'].createClass({
 				{ ref: 'control',
 					className: 'Select-control',
 					style: this.props.style,
-					onKeyDown: this.handleKeyDown,
-					onMouseDown: this.handleMouseDown,
-					onTouchEnd: this.handleTouchEnd,
-					onTouchStart: this.handleTouchStart,
-					onTouchMove: this.handleTouchMove },
+					onMouseDown: this.handleMouseDown },
 				this.renderValue(valueArray, isOpen),
-				this.renderInput(valueArray),
 				this.renderLoading(),
 				this.renderClear(),
 				this.renderArrow()
 			),
-			isOpen ? _react2['default'].createElement(
+			_react2['default'].createElement(
 				'div',
-				{ ref: 'menuContainer', className: 'Select-menu-outer', style: this.props.menuContainerStyle },
+				{ className: 'select2-outer' },
 				_react2['default'].createElement(
 					'div',
-					{ ref: 'menu', className: 'Select-menu',
-						style: this.props.menuStyle,
-						onScroll: this.handleMenuScroll,
-						onMouseDown: this.handleMouseDownOnMenu },
-					this.renderMenu(options, !this.props.multi ? valueArray : null, focusedOption)
+					{ className: 'select2-box',
+						onKeyDown: this.handleKeyDown,
+						onMouseDown: this.handleMouseDown,
+						onTouchEnd: this.handleTouchEnd,
+						onTouchStart: this.handleTouchStart,
+						onTouchMove: this.handleTouchMove
+					},
+					this.renderInput(valueArray)
 				)
-			) : null
+			),
+			isOpen ? this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption) : null
 		);
 	}
 
@@ -1292,8 +1331,8 @@ var Value = _react2['default'].createClass({
 				style: this.props.value.style,
 				title: this.props.value.title
 			},
-			this.renderRemoveIcon(),
-			this.renderLabel()
+			this.renderLabel(),
+			this.renderRemoveIcon()
 		);
 	}
 
