@@ -196,13 +196,19 @@ const Select = React.createClass({
 
 	focus () {
 		if (!this.refs.input) return;
-		this.refs.input.focus();
-
-		if (this.props.openAfterFocus) {
+		// this.refs.input.focus();
+		if (this.props.openAfterFocus || this._openAfterFocus) {
+			this._openAfterFocus = false;
 			this.setState({
 				isOpen: true,
 			});
 		}
+
+		let self = this;
+
+		setTimeout(function(){
+			self.refs.input.focus();
+		},500);
 	},
 
 	blurInput() {
@@ -239,6 +245,10 @@ const Select = React.createClass({
 	},
 
 	handleMouseDown (event) {
+
+		// console.log('this.state.isOpen',this.state.isOpen);
+		// console.log('this.state.isFocused',this.state.isFocused);
+		// console.log('this.props.searchable',this.props.searchable);
 		// if the event was triggered by a mousedown and not the primary
 		// button, or if the component is disabled, ignore it.
 		if (this.props.disabled || (event.type === 'mousedown' && event.button !== 0)) {
@@ -252,6 +262,7 @@ const Select = React.createClass({
 		// for the non-searchable select, toggle the menu
 		if (!this.props.searchable) {
 			this.focus();
+			console.log('a');
 			return this.setState({
 				isOpen: !this.state.isOpen,
 			});
@@ -264,6 +275,7 @@ const Select = React.createClass({
 				isPseudoFocused: false,
 			});
 		} else {
+			console.log('2');
 			// otherwise, focus the input and open the menu
 			this._openAfterFocus = true;
 			this.focus();
@@ -575,7 +587,7 @@ const Select = React.createClass({
 		let renderLabel = this.props.valueRenderer || this.getOptionLabel;
 		let ValueComponent = this.props.valueComponent;
 		if (!valueArray.length) {
-			return !this.state.inputValue ? <div className="Select-placeholder">{this.props.placeholder}</div> : null;
+			return !this.state.inputValue ? <div className="Select-placeholder">{this.props.placeholder}</div> : <div className="Select-placeholder-empty"></div>;
 		}
 		let onClick = this.props.onValueClick ? this.handleValueClick : null;
 		if (this.props.multi) {
@@ -593,6 +605,7 @@ const Select = React.createClass({
 				);
 			});
 		} else if (!this.state.inputValue) {
+
 			if (isOpen) onClick = null;
 			return (
 				<ValueComponent
@@ -669,7 +682,7 @@ const Select = React.createClass({
 	renderArrow () {
 		return (
 			<span className="Select-arrow-zone" onMouseDown={this.handleMouseDownOnArrow}>
-				<span className="Select-arrow" onMouseDown={this.handleMouseDownOnArrow} />
+				<span className="select2-arrow" onMouseDown={this.handleMouseDownOnArrow}><b></b></span>
 			</span>
 		);
 	},
@@ -842,17 +855,27 @@ const Select = React.createClass({
 				<div ref="control"
 						 className="Select-control"
 						 style={this.props.style}
-						 onKeyDown={this.handleKeyDown}
-						 onMouseDown={this.handleMouseDown}
-						 onTouchEnd={this.handleTouchEnd}
-						 onTouchStart={this.handleTouchStart}
-						 onTouchMove={this.handleTouchMove}>
+						 onMouseDown={this.handleMouseDown}>
 					{this.renderValue(valueArray, isOpen)}
-					{this.renderInput(valueArray)}
+
 					{this.renderLoading()}
 					{this.renderClear()}
 					{this.renderArrow()}
 				</div>
+
+				<div className="select2-outer">
+					<div className="select2-box"
+						onKeyDown={this.handleKeyDown}
+						onMouseDown={this.handleMouseDown}
+						onTouchEnd={this.handleTouchEnd}
+						onTouchStart={this.handleTouchStart}
+						onTouchMove={this.handleTouchMove}
+						>
+						{this.renderInput(valueArray)}
+					</div>
+				</div>
+
+
 				{isOpen ? this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption) : null}
 			</div>
 		);
