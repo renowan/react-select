@@ -29,7 +29,7 @@
 .Select-control {
   background-color: #fff;
   border-radius: 0px;
-  border: 1px solid #5d5d5d;
+  border: 1px solid #d5d5d5;
   color: #333;
   cursor: pointer;
   display: table;
@@ -151,7 +151,7 @@
   height: 16px;
   box-sizing: border-box;
   border-radius: 50%;
-  border: 2px solid #5d5d5d;
+  border: 2px solid #d5d5d5;
   border-right-color: #333;
   display: inline-block;
   position: relative;
@@ -399,8 +399,8 @@
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 0px;
   background-color: #fff;
-  border: 1px solid #5d5d5d;
-  border-top-color: #aeaeae;
+  border: 1px solid #d5d5d5;
+  border-top-color: #eaeaea;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
   margin-top: 0px;
@@ -414,8 +414,8 @@
 }
 .select2-outer {
   margin-top: -2px;
-  border-left: 1px solid #5d5d5d;
-  border-right: 1px solid #5d5d5d;
+  border-left: 1px solid #d5d5d5;
+  border-right: 1px solid #d5d5d5;
   background-color: #fff;
   padding: 3px;
   z-index: 2;
